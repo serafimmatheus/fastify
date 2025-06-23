@@ -1,0 +1,56 @@
+openapi: 3.0.3
+info:
+  title: Fastify API
+  description: API documentation for Fastify application
+  version: 1.0.0
+components:
+  schemas: {}
+paths:
+  /swagger.yaml:
+    get:
+      responses:
+        "200":
+          description: Default Response
+  /tasks:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                description:
+                  type: string
+                isCompleted:
+                  default: false
+                  type: boolean
+              required:
+                - title
+        required: true
+      responses:
+        "201":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: cuid
+                    pattern: ^[cC][^\s-]{8,}$
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  isCompleted:
+                    type: boolean
+                required:
+                  - id
+                  - title
+                  - isCompleted
+                additionalProperties: false
+servers: []

@@ -9,6 +9,8 @@ import {
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
 import z from 'zod/v4'
+import path from 'path'
+import fs from 'fs'
 
 const PORT = process.env.PORT || 5001
 
@@ -48,6 +50,13 @@ const init = async () => {
   })
 
   app.after(() => {
+    app.get('/swagger.yaml', (req, res) => {
+      const filePath = path.join(__dirname, 'swagger.yaml')
+      return res
+        .header('Content-Type', 'application/x-yaml')
+        .send(fs.createReadStream(filePath))
+    })
+
     app.withTypeProvider<ZodTypeProvider>().route({
       method: 'POST',
       url: '/tasks',
@@ -75,6 +84,13 @@ const init = async () => {
         })
       },
     })
+  })
+
+  app.ready((err) => {
+    const yamlString = app.swagger({ yaml: true })
+    const filePath = path.join(__dirname, 'swagger.yaml')
+    fs.writeFileSync(filePath, yamlString)
+    console.log(`Swagger YAML file generated at ${filePath}`)
   })
 
   try {
